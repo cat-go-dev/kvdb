@@ -1,9 +1,15 @@
 package cli
 
 import (
-	"kdb/internal/database"
+	"bytes"
+	"context"
+	"fmt"
 	"log/slog"
 	"testing"
+
+	"kdb/internal/database"
+	"kdb/internal/ports"
+	mockports "kdb/mocks"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -23,8 +29,40 @@ func TestNewClientWithEmptyLogger(t *testing.T) {
 	assert.ErrorIs(t, err, errInvalidLogger)
 }
 
-func TestExecuteCommand(t *testing.T) {
-	logger := slog.New(&slog.TextHandler{})
-	db := database.NewDatabase(logger)
+func TestExecuteCommandSuccess(t *testing.T) {
+	ctx := context.Background()
+	db := mockports.NewMockDatabase(t)
+	command := "test"
+	expected := "success"
 
+	db.EXPECT().Execute(ctx, command).Return(&ports.Result{
+		Msg: expected,
+	}, nil).Once()
+
+	buf := new(bytes.Buffer)
+	client, err := NewClient(db, slog.New(slog.NewTextHandler(buf, nil)))
+
+	assert.Nil(t, err)
+
+	actual := client.executeCommand(ctx, command)
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestExecuteCommandError(t *testing.T) {
+	ctx := context.Background()
+	db := mockports.NewMockDatabase(t)
+	command := "test"
+	expected := fmt.Sprintf("error while executing command: %s", command)
+
+	db.EXPECT().Execute(ctx, command).Return(nil, fmt.Errorf("test")).Once()
+
+	buf := new(bytes.Buffer)
+	client, err := NewClient(db, slog.New(slog.NewTextHandler(buf, nil)))
+
+	assert.Nil(t, err)
+
+	actual := client.executeCommand(ctx, command)
+
+	assert.Equal(t, expected, actual)
 }

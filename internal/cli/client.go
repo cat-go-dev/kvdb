@@ -4,17 +4,18 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"kdb/internal/database"
 	"log/slog"
 	"os"
+
+	"kdb/internal/ports"
 )
 
 type Client struct {
-	db     *database.Database
+	db     ports.Database
 	logger *slog.Logger
 }
 
-func NewClient(db *database.Database, logger *slog.Logger) (*Client, error) {
+func NewClient(db ports.Database, logger *slog.Logger) (*Client, error) {
 	if db == nil {
 		return nil, errInvalidDatabase
 	}

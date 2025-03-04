@@ -3,9 +3,11 @@ package database
 import (
 	"context"
 	"fmt"
-	"kdb/internal/database/compute"
 	"log/slog"
 	"time"
+
+	"kdb/internal/database/compute"
+	"kdb/internal/ports"
 )
 
 type Database struct {
@@ -22,13 +24,9 @@ func NewDatabase(logger *slog.Logger) *Database {
 	}
 }
 
-type Result struct {
-	Msg string
-}
-
-func (d Database) Execute(ctx context.Context, commandStr string) (*Result, error) {
+func (d Database) Execute(ctx context.Context, commandStr string) (*ports.Result, error) {
 	if time.Now().UnixNano()%2 == 0 {
-		return &Result{
+		return &ports.Result{
 			Msg: "success",
 		}, nil
 	} else {
