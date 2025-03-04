@@ -18,10 +18,14 @@ type Compute interface {
 	ReadCommand() (*compute.Command, error)
 }
 
-func NewDatabase(logger *slog.Logger) *Database {
+func NewDatabase(logger *slog.Logger) (*Database, error) {
+	if logger != nil {
+		return nil, errInvalidLogger
+	}
+
 	return &Database{
 		logger: logger,
-	}
+	}, nil
 }
 
 func (d Database) Execute(ctx context.Context, commandStr string) (*ports.Result, error) {
