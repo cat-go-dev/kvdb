@@ -39,19 +39,31 @@ func (c Client) Run(ctx context.Context) error {
 	}
 
 	reader := bufio.NewReader(os.Stdin)
+	commandCh := make(chan string)
 
 	for {
 		fmt.Print(commandPrefix)
 
-		command, err := reader.ReadString('\n')
-		if err != nil {
-			wErr := fmt.Errorf("read command: %w", err)
-			c.logger.ErrorContext(ctx, wErr.Error(), logAttrs...)
-			fmt.Printf("%ssomething went wrong \r\n", commandPrefix)
-			continue
+		go func() {
+			command, err := reader.ReadString('\n')
+			if err != nil {
+				wErr := fmt.Errorf("read command: %w", err)
+				c.logger.ErrorContext(ctx, wErr.Error(), logAttrs...)
+				fmt.Printf("%ssomething went wrong \r\n", commandPrefix)
+				return
+			}
+
+			commandCh <- command
+		}()
+
+		select {
+		case command := <-commandCh:
+			fmt.Printf("%s%s \r\n", commandPrefix, c.executeCommand(ctx, command))
+		case <-ctx.Done():
+			c.logger.WarnContext(ctx, "canceled context", logAttrs...)
+			return errCanceledContext
 		}
 
-		fmt.Printf("%s%s \r\n", commandPrefix, c.executeCommand(ctx, command))
 	}
 }
 

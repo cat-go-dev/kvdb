@@ -19,7 +19,7 @@ type Compute interface {
 }
 
 func NewDatabase(logger *slog.Logger) (*Database, error) {
-	if logger != nil {
+	if logger == nil {
 		return nil, errInvalidLogger
 	}
 
