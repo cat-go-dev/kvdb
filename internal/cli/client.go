@@ -77,7 +77,7 @@ func (c Client) executeCommand(ctx context.Context, command string) string {
 	if err != nil {
 		wErr := fmt.Errorf("db executing: %w", err)
 		c.logger.ErrorContext(ctx, wErr.Error(), logAttrs...)
-		return fmt.Sprintf("error while executing command: %s", command)
+		return err.Error()
 	}
 
 	return r.Msg

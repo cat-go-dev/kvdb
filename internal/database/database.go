@@ -4,41 +4,49 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"time"
 
 	"kdb/internal/database/compute"
 	"kdb/internal/ports"
 )
 
 type Database struct {
-	logger *slog.Logger
+	compute *compute.Compute
+	logger  *slog.Logger
 }
 
-type Compute interface {
-	ReadCommand() (*compute.Command, error)
-}
+func NewDatabase(compute *compute.Compute, logger *slog.Logger) (*Database, error) {
+	if compute == nil {
+		return nil, errInvalidCompute
+	}
 
-func NewDatabase(logger *slog.Logger) (*Database, error) {
 	if logger == nil {
 		return nil, errInvalidLogger
 	}
 
 	return &Database{
-		logger: logger,
+		compute: compute,
+		logger:  logger,
 	}, nil
 }
 
 func (d Database) Execute(ctx context.Context, commandStr string) (*ports.Result, error) {
-	if time.Now().UnixNano()%2 == 0 {
-		return &ports.Result{
-			Msg: "success",
-		}, nil
-	} else {
-		return nil, fmt.Errorf("test")
+	logAttrs := []any{
+		slog.String("component", "database"),
+		slog.String("method", "Execute"),
 	}
-	// todo: parse command
+
+	command, err := d.compute.Parse(ctx, commandStr)
+	if err != nil {
+		wErr := fmt.Errorf("compute parse: %w", err)
+		d.logger.ErrorContext(ctx, wErr.Error(), logAttrs...)
+		return nil, err
+	}
+
+	fmt.Println("command", command)
 
 	// todo: execute command
 
-	return nil, nil
+	return &ports.Result{
+		Msg: "success",
+	}, nil
 }
