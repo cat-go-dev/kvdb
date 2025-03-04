@@ -22,7 +22,6 @@ func NewCompute(logger *slog.Logger) (*Compute, error) {
 
 const minTokensNum = 2
 
-// todo: make tests
 func (c Compute) Parse(ctx context.Context, query string) (*Command, error) {
 	logAttrs := []any{
 		slog.String("component", "compute"),
@@ -51,7 +50,6 @@ func (c Compute) Parse(ctx context.Context, query string) (*Command, error) {
 	}, nil
 }
 
-// todo: make tests
 func (c Compute) getCommandType(command string) (CommandType, error) {
 	switch command {
 	case "GET":
@@ -65,7 +63,6 @@ func (c Compute) getCommandType(command string) (CommandType, error) {
 	}
 }
 
-// todo: make tests
 func (c Compute) getArguments(tokens []string) Arguments {
 	arguments := Arguments{
 		Key: Argument(tokens[1]),

@@ -63,7 +63,6 @@ func (c Client) Run(ctx context.Context) error {
 			c.logger.WarnContext(ctx, "canceled context", logAttrs...)
 			return errCanceledContext
 		}
-
 	}
 }
 
