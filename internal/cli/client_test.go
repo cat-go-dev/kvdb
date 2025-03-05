@@ -53,7 +53,7 @@ func TestExecuteCommandError(t *testing.T) {
 	ctx := context.Background()
 	db := mockports.NewMockDatabase(t)
 	command := "test"
-	expected := fmt.Sprintf("error while executing command: %s - %s", command, "test")
+	expected := "test"
 
 	db.EXPECT().Execute(ctx, command).Return(nil, fmt.Errorf("test")).Once()
 
