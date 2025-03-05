@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strings"
 
 	"kdb/internal/ports"
 )
@@ -53,7 +54,9 @@ func (c Client) Run(ctx context.Context) error {
 				return
 			}
 
-			commandCh <- command
+			preparedCommand := strings.ReplaceAll(command, "\r\n", "")
+
+			commandCh <- preparedCommand
 		}()
 
 		select {
