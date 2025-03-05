@@ -31,7 +31,7 @@ func TestGetCommandType(t *testing.T) {
 	}
 }
 
-func TestGetArguments(t *testing.T) {
+func TestGetArgumentsSuccess(t *testing.T) {
 	tests := []struct {
 		name     string
 		tokens   []string
@@ -46,8 +46,32 @@ func TestGetArguments(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := compute.getArguments(tt.tokens)
+			actual, err := compute.getArguments(tt.tokens)
+
+			assert.Nil(t, err)
 			assert.Equal(t, tt.expected, actual)
+		})
+	}
+}
+
+func TestGetArgumentsNotEnoghtArguments(t *testing.T) {
+	tests := []struct {
+		name     string
+		tokens   []string
+		expected error
+	}{
+		{name: "1 argument error", tokens: []string{"GET"}, expected: errNotEnoughArguments},
+		{name: "0 argument error", tokens: []string{}, expected: errNotEnoughArguments},
+		{name: "2 argument without error", tokens: []string{"GET", "test"}, expected: nil},
+	}
+
+	buf := new(bytes.Buffer)
+	compute, _ := NewCompute(slog.New(slog.NewTextHandler(buf, nil)))
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := compute.getArguments(tt.tokens)
+			assert.Equal(t, tt.expected, err)
 		})
 	}
 }
