@@ -7,8 +7,8 @@ echo "Running go fmt..."
 go fmt ./...
 
 # Линтинг
-echo "Running golint..."
-golint ./...
+echo "Running golangci-lint..."
+golangci-lint run
 
 # Запуск тестов
 echo "Running go test..."
