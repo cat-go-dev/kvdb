@@ -1,6 +1,9 @@
 with-expecter: True
 dir: mocks/
 packages:
-  kdb/internal/ports:
+  kdb/internal/:
     interfaces:
       Database:
+  kdb/internal/database/storage:
+    interfaces:
+      EngineLayer:
