@@ -19,7 +19,6 @@ func NewEngine() *Engine {
 	}
 }
 
-// todo: make test
 func (e *Engine) Get(ctx context.Context, key string) (string, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
@@ -32,7 +31,6 @@ func (e *Engine) Get(ctx context.Context, key string) (string, error) {
 	return value, nil
 }
 
-// todo: make test
 func (e *Engine) Set(ctx context.Context, key, value string) error {
 	e.mu.Lock()
 	defer e.mu.Unlock()
@@ -42,7 +40,6 @@ func (e *Engine) Set(ctx context.Context, key, value string) error {
 	return nil
 }
 
-// todo: make test
 func (e *Engine) Del(ctx context.Context, key string) error {
 	e.mu.Lock()
 	defer e.mu.Unlock()
