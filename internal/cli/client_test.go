@@ -9,7 +9,7 @@ import (
 
 	"kdb/internal/database"
 	"kdb/internal/ports"
-	mockports "kdb/mocks"
+	"kdb/internal/ports/mocks"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -31,7 +31,7 @@ func TestNewClientWithEmptyLogger(t *testing.T) {
 
 func TestExecuteCommandSuccess(t *testing.T) {
 	ctx := context.Background()
-	db := mockports.NewMockDatabase(t)
+	db := mocks.NewDatabase(t)
 	command := "test"
 	expected := "success"
 
@@ -51,7 +51,7 @@ func TestExecuteCommandSuccess(t *testing.T) {
 
 func TestExecuteCommandError(t *testing.T) {
 	ctx := context.Background()
-	db := mockports.NewMockDatabase(t)
+	db := mocks.NewDatabase(t)
 	command := "test"
 	expected := "test"
 

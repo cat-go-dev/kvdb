@@ -31,7 +31,6 @@ type EngineLayer interface {
 	Del(ctx context.Context, key string) error
 }
 
-// todo: make test
 func (s Storage) Get(ctx context.Context, key string) (string, error) {
 	logAttrs := []any{
 		slog.String("component", "storage"),
@@ -49,7 +48,6 @@ func (s Storage) Get(ctx context.Context, key string) (string, error) {
 	return res, nil
 }
 
-// todo: make test
 func (s Storage) Set(ctx context.Context, key, value string) error {
 	logAttrs := []any{
 		slog.String("component", "storage"),
@@ -68,7 +66,6 @@ func (s Storage) Set(ctx context.Context, key, value string) error {
 	return nil
 }
 
-// todo: make test
 func (s Storage) Del(ctx context.Context, key string) error {
 	logAttrs := []any{
 		slog.String("component", "storage"),
