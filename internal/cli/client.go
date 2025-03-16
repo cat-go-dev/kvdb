@@ -7,18 +7,20 @@ import (
 	"log/slog"
 	"os"
 	"strings"
-
-	"kdb/internal/ports"
 )
 
+type Executor interface {
+	Execute(ctx context.Context, command string) string
+}
+
 type Client struct {
-	db     ports.Database
+	e      Executor
 	logger *slog.Logger
 }
 
-func NewClient(db ports.Database, logger *slog.Logger) (*Client, error) {
-	if db == nil {
-		return nil, errInvalidDatabase
+func NewClient(execuror Executor, logger *slog.Logger) (*Client, error) {
+	if execuror == nil {
+		return nil, errInvalidExecutor
 	}
 
 	if logger == nil {
@@ -26,7 +28,7 @@ func NewClient(db ports.Database, logger *slog.Logger) (*Client, error) {
 	}
 
 	return &Client{
-		db:     db,
+		e:      execuror,
 		logger: logger,
 	}, nil
 }
@@ -61,26 +63,10 @@ func (c Client) Run(ctx context.Context) error {
 
 		select {
 		case command := <-commandCh:
-			fmt.Printf("%s%s \r\n", commandPrefix, c.executeCommand(ctx, command))
+			fmt.Printf("%s%s \r\n", commandPrefix, c.e.Execute(ctx, command))
 		case <-ctx.Done():
 			c.logger.WarnContext(ctx, "canceled context", logAttrs...)
 			return errCanceledContext
 		}
 	}
-}
-
-func (c Client) executeCommand(ctx context.Context, command string) string {
-	logAttrs := []any{
-		slog.String("component", "cli"),
-		slog.String("method", "executeCimmand"),
-	}
-
-	r, err := c.db.Execute(ctx, command)
-	if err != nil {
-		wErr := fmt.Errorf("db executing: %w", err)
-		c.logger.ErrorContext(ctx, wErr.Error(), logAttrs...)
-		return err.Error()
-	}
-
-	return r.Msg
 }

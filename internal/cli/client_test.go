@@ -14,16 +14,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewClientWithEmptyDatabase(t *testing.T) {
+func TestNewClientWithEmptyExecutor(t *testing.T) {
 	client, err := NewClient(nil, nil)
 
 	assert.Nil(t, client)
-	assert.ErrorIs(t, err, errInvalidDatabase)
+	assert.ErrorIs(t, err, errInvalidExecutor)
 }
 
 func TestNewClientWithEmptyLogger(t *testing.T) {
 	db := &database.Database{}
-	client, err := NewClient(db, nil)
+	client, err := NewClient(db, nil
 
 	assert.Nil(t, client)
 	assert.ErrorIs(t, err, errInvalidLogger)
