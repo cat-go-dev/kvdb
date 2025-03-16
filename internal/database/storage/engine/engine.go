@@ -6,7 +6,7 @@ import (
 )
 
 type Engine struct {
-	mu *sync.Mutex
+	mu sync.Mutex
 	m  map[string]string
 }
 
@@ -14,7 +14,7 @@ const defaultMapSize = 1000
 
 func NewEngine() *Engine {
 	return &Engine{
-		mu: &sync.Mutex{},
+		mu: sync.Mutex{},
 		m:  make(map[string]string, defaultMapSize),
 	}
 }
